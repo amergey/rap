@@ -43,6 +43,7 @@ import org.eclipse.rap.rwt.lifecycle.PhaseListener;
 import org.eclipse.rap.rwt.service.ResourceLoader;
 import org.eclipse.rap.rwt.service.ServiceHandler;
 import org.eclipse.rap.rwt.service.SettingStoreFactory;
+import org.eclipse.rap.rwt.service.ThemeIdProvider;
 import org.eclipse.rap.ui.internal.application.EntryPointApplicationWrapper;
 import org.eclipse.rap.ui.internal.branding.AbstractBranding;
 import org.eclipse.rap.ui.internal.branding.BrandingExtension;
@@ -68,9 +69,13 @@ public final class WorkbenchApplicationConfigurator implements ApplicationConfig
   private static final String ID_PHASE_LISTENER = "org.eclipse.rap.ui.phaselistener";
   private static final String ID_SERVICE_HANDLER = "org.eclipse.rap.ui.serviceHandler";
   private static final String ID_SETTING_STORES = "org.eclipse.rap.ui.settingstores";
+  private static final String ID_THEME_ID_PROVIDER = "org.eclipse.rap.ui.themeIdProviders";
 
   private static final String PROP_SETTING_STORES_FACTORY
     = "org.eclipse.rap.rwt.settingStoreFactory";
+  
+  private static final String PROP_THEME_ID_PROVIDER
+  = "org.eclipse.rap.rwt.themeIdProvider";
 
   private static final String RUN = "run"; //$NON-NLS-1$
   private static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
@@ -90,6 +95,7 @@ public final class WorkbenchApplicationConfigurator implements ApplicationConfig
     application.setOperationMode( OperationMode.SWT_COMPATIBILITY );
     registerPhaseListener( application );
     registerSettingStoreFactory( application );
+    registerThemeIdProvider( application );
     registerThemeableWidgets( application );
     registerThemes( application );
     registerThemeContributions( application );
@@ -126,6 +132,17 @@ public final class WorkbenchApplicationConfigurator implements ApplicationConfig
     }
     application.setSettingStoreFactory( result );
   }
+  
+  private void registerThemeIdProvider( Application application ) {
+    // determine which provider to use via an environment setting / config.ini
+    String providerId = getOSGiProperty( PROP_THEME_ID_PROVIDER );
+    if( providerId != null ) {
+      ThemeIdProvider result = loadThemeIdProvider( providerId );
+      if( result != null ) {
+        application.setThemeIdProvider( result );
+      }
+    }
+  }
 
   private SettingStoreFactory loadSettingStoreFactory( String factoryId ) {
     SettingStoreFactory result = null;
@@ -149,6 +166,34 @@ public final class WorkbenchApplicationConfigurator implements ApplicationConfig
     SettingStoreFactory result = null;
     try {
       result = ( SettingStoreFactory )element.createExecutableExtension( "class" );
+    } catch( CoreException cex ) {
+      WorkbenchPlugin.log( cex.getStatus() );
+    }
+    return result;
+  }
+  
+  private ThemeIdProvider loadThemeIdProvider( String providerId ) {
+    ThemeIdProvider result = null;
+    IExtensionRegistry registry = Platform.getExtensionRegistry();
+    IExtensionPoint point = registry.getExtensionPoint( ID_THEME_ID_PROVIDER );
+    IConfigurationElement[] elements = point.getConfigurationElements();
+    for( int i = 0; i < elements.length; i++ ) {
+      String id = elements[ i ].getAttribute( "id" );
+      if( providerId.equals( id ) ) {
+        result = loadThemeIdProvider( elements[ i ] );
+      }
+    }
+    if( result == null ) {
+      String msg = "Unable to find theme id provider with id '" + providerId + "'.";
+      WorkbenchPlugin.log( msg );
+    }
+    return result;
+  }
+  
+  private ThemeIdProvider loadThemeIdProvider( IConfigurationElement element ) {
+    ThemeIdProvider result = null;
+    try {
+      result = ( ThemeIdProvider )element.createExecutableExtension( "class" );
     } catch( CoreException cex ) {
       WorkbenchPlugin.log( cex.getStatus() );
     }

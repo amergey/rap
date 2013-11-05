@@ -45,8 +45,10 @@ import org.eclipse.rap.rwt.internal.util.SerializableLock;
 import org.eclipse.rap.rwt.service.ApplicationContext;
 import org.eclipse.rap.rwt.service.ApplicationContextEvent;
 import org.eclipse.rap.rwt.service.ApplicationContextListener;
+import org.eclipse.rap.rwt.service.DefaultThemeIdProvider;
 import org.eclipse.rap.rwt.service.FileSettingStoreFactory;
 import org.eclipse.rap.rwt.service.ResourceManager;
+import org.eclipse.rap.rwt.service.ThemeIdProvider;
 import org.eclipse.swt.internal.graphics.FontDataFactory;
 import org.eclipse.swt.internal.graphics.ImageDataFactory;
 import org.eclipse.swt.internal.graphics.ImageFactory;
@@ -110,6 +112,7 @@ public class ApplicationContextImpl implements ApplicationContext {
   private final SerializableLock listenersLock;
   private final AtomicReference<State> state;
   private ExceptionHandler exceptionHandler;
+  private ThemeIdProvider themeIdProvider;
 
   public ApplicationContextImpl( ApplicationConfiguration applicationConfiguration,
                                  ServletContext servletContext )
@@ -314,9 +317,17 @@ public class ApplicationContextImpl implements ApplicationContext {
   public ExceptionHandler getExceptionHandler() {
     return exceptionHandler;
   }
+  
+  public ThemeIdProvider getThemeIdProvider() {
+    return themeIdProvider;
+  }
 
   public void setExceptionHandler( ExceptionHandler exceptionHandler ) {
     this.exceptionHandler = exceptionHandler;
+  }
+  
+  public void setThemeIdProvider( ThemeIdProvider themeIdProvider ) {
+    this.themeIdProvider = themeIdProvider;
   }
 
   void doActivate() {
@@ -326,6 +337,7 @@ public class ApplicationContextImpl implements ApplicationContext {
     addInternalPhaseListeners();
     addInternalServiceHandlers();
     setInternalSettingStoreFactory();
+    setInternalThemeIdProvider();
     startupPage.activate();
     lifeCycleFactory.activate();
     // Note: order is crucial here
@@ -379,6 +391,12 @@ public class ApplicationContextImpl implements ApplicationContext {
   private void setInternalSettingStoreFactory() {
     if( !settingStoreManager.hasFactory() ) {
       settingStoreManager.register( new FileSettingStoreFactory() );
+    }
+  }
+  
+  private void setInternalThemeIdProvider() {
+    if( themeIdProvider == null) {
+      themeIdProvider = new DefaultThemeIdProvider();
     }
   }
 

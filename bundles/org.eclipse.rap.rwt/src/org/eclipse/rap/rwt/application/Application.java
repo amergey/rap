@@ -18,10 +18,11 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.WebClient;
 import org.eclipse.rap.rwt.lifecycle.PhaseListener;
 import org.eclipse.rap.rwt.service.ApplicationContext;
-import org.eclipse.rap.rwt.service.SettingStore;
-import org.eclipse.rap.rwt.service.SettingStoreFactory;
 import org.eclipse.rap.rwt.service.ResourceLoader;
 import org.eclipse.rap.rwt.service.ServiceHandler;
+import org.eclipse.rap.rwt.service.SettingStore;
+import org.eclipse.rap.rwt.service.SettingStoreFactory;
+import org.eclipse.rap.rwt.service.ThemeIdProvider;
 import org.eclipse.rap.rwt.widgets.DialogUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -190,6 +191,15 @@ public interface Application {
    * @see SettingStore
    */
   void setSettingStoreFactory( SettingStoreFactory settingStoreFactory );
+  
+  /**
+   * Configure this application to use custom theme id provider implementation.
+   * 
+   * @param the theme id provider implementation to use, must not be <code>null</code>
+   * @see ThemeIdProvider
+   * @since 2.2
+   */
+  void setThemeIdProvider(ThemeIdProvider themeIdProvider);
 
   /**
    * Sets the exception handler to which exceptions should be forwarded that occur while running

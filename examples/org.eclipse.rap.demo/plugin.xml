@@ -317,5 +317,26 @@
          <keywordReference id="org.eclipse.ui.demo.preferenceKeywords"/>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.rap.ui.themeIdProviders">
+      <provider
+            class="org.eclipse.rap.demo.theme.SettingStoreProvider"
+            id="settingStore">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="Theme">
+            <dynamic
+                  class="org.eclipse.rap.demo.theme.ThemeChooserContributionItem"
+                  id="org.eclipse.rap.demo.themeChooser">
+            </dynamic>
+         </menu>
+      </menuContribution>
+   </extension>
 
 </plugin>

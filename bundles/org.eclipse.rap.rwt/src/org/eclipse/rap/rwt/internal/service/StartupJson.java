@@ -13,7 +13,6 @@ package org.eclipse.rap.rwt.internal.service;
 import static org.eclipse.rap.rwt.internal.service.ContextProvider.getApplicationContext;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,11 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.rap.json.JsonObject;
 import org.eclipse.rap.json.JsonValue;
 import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.client.WebClient;
 import org.eclipse.rap.rwt.internal.application.ApplicationContextImpl;
 import org.eclipse.rap.rwt.internal.client.ClientMessages;
-import org.eclipse.rap.rwt.internal.lifecycle.EntryPointManager;
-import org.eclipse.rap.rwt.internal.lifecycle.EntryPointRegistration;
 import org.eclipse.rap.rwt.internal.protocol.ProtocolMessageWriter;
 import org.eclipse.rap.rwt.internal.remote.DeferredRemoteObject;
 import org.eclipse.rap.rwt.internal.remote.RemoteObjectImpl;
@@ -112,14 +108,10 @@ public class StartupJson {
   private static String getCurrentThemeId() {
     String result = RWT.DEFAULT_THEME_ID;
     ApplicationContextImpl applicationContext = getApplicationContext();
-    ThemeManager themeManager = applicationContext.getThemeManager();
-    EntryPointManager entryPointManager = applicationContext.getEntryPointManager();
-    String servletPath = ContextProvider.getRequest().getServletPath();
-    EntryPointRegistration registration = entryPointManager.getRegistrationByPath( servletPath );
-    if( registration != null ) {
-      Map<String, String> properties = registration.getProperties();
-      String themeId = properties.get( WebClient.THEME_ID );
-      if( themeId != null && themeId.length() > 0 && themeManager.hasTheme( themeId ) ) {
+    String themeId = applicationContext.getThemeIdProvider().getThemeId();
+    if( themeId != null && themeId.length() > 0){
+      ThemeManager themeManager = applicationContext.getThemeManager();
+      if( themeManager.hasTheme( themeId ) ) {
         result = themeId;
       }
     }

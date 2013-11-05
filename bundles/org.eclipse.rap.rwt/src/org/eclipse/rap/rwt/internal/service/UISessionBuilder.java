@@ -10,18 +10,12 @@
  ******************************************************************************/
 package org.eclipse.rap.rwt.internal.service;
 
-import java.util.Collections;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.client.WebClient;
 import org.eclipse.rap.rwt.internal.SingletonManager;
 import org.eclipse.rap.rwt.internal.application.ApplicationContextImpl;
-import org.eclipse.rap.rwt.internal.lifecycle.EntryPointManager;
-import org.eclipse.rap.rwt.internal.lifecycle.EntryPointRegistration;
 import org.eclipse.rap.rwt.internal.theme.ThemeUtil;
 
 
@@ -49,8 +43,8 @@ public class UISessionBuilder {
   }
 
   private void setCurrentTheme() {
-    Map<String, String> properties = getEntryPointProperties();
-    String themeId = properties.get( WebClient.THEME_ID );
+    ApplicationContextImpl applicationContext = uiSession.getApplicationContext();
+    String themeId = applicationContext.getThemeIdProvider().getThemeId();
     if( themeId != null && themeId.length() > 0 ) {
       verifyThemeId( themeId );
       ThemeUtil.setCurrentThemeId( uiSession, themeId );
@@ -70,21 +64,4 @@ public class UISessionBuilder {
       throw new IllegalArgumentException( "Illegal theme id: " + themeId );
     }
   }
-
-  private Map<String, String> getEntryPointProperties() {
-    ApplicationContextImpl applicationContext = uiSession.getApplicationContext();
-    EntryPointManager entryPointManager = applicationContext.getEntryPointManager();
-    // TODO [rh] silently ignore non-existing registration for now, otherwise most tests would fail
-    //      since they don't register an entry point
-    String servletPath = serviceContext.getRequest().getServletPath();
-    EntryPointRegistration registration = entryPointManager.getRegistrationByPath( servletPath );
-    Map<String, String> result;
-    if( registration != null ) {
-      result = registration.getProperties();
-    } else {
-      result = Collections.emptyMap();
-    }
-    return result;
-  }
-
 }

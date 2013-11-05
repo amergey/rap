@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.rap.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.rap.ui" id="themeIdProviders" name="Theme Id Providers"/>
+      </appInfo>
+      <documentation>
+         This extension point allows developers to contribute additional &lt;code&gt;ThemeIdProvider&lt;/code&gt; instances.
+&lt;p&gt;
+A &lt;code&gt;ThemeIdProvider&lt;/code&gt; give current theme id to use
+&lt;p&gt;
+Developers that want to implement their own provider must provide a theme id provider and register it with the framework using this extension point.
+&lt;p&gt;
+Note that at runtime only &lt;b&gt;one&lt;/b&gt; (out of all available) providers will be used. Which provider is used can be controlled in two ways:
+&lt;ul&gt;
+&lt;li&gt;In a normal RAP deployment you can specify the provider to be used by placing the following property in the OSGi config.ini file: &lt;code&gt;org.eclipse.rap.rwt.themeIdProvider=&lt;i&gt;id&lt;/i&gt;&lt;/code&gt; where &lt;i&gt;id&lt;/i&gt; identifies a particular provider element. Example:
+&lt;pre&gt;
+org.eclipse.rap.rwt.themeIdProvider=settingStore
+&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;In RWT-only deployment you can specify the provider to be used in the application configuration:
+&lt;pre&gt;
+public class SimpleConfiguration implements ApplicationConfiguration {
+
+  public void configure( Application application ) {
+    ...
+    application.setThemeIdProvider( new SettingStoreThemeIdProvider() );
+    ...
+  }
+
+}
+&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;If nothing is specified, the class &lt;code&gt;DefaultThemeIdProvider&lt;/code&gt; will be used.&lt;/li&gt;
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="provider"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="provider">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
+         <documentation>
+            This element is used to define theme id providers. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt;, only the last declared element (in order of reading the registry) is considered valid.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique identifier of this provider
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class implementing the &lt;code&gt;org.eclipse.rap.rwt.service.ThemeIdProvider&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.rap.rwt.service.ThemeIdProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         RAP 2.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+&lt;extension
+    point=&quot;org.eclipse.rap.ui.themeIdProviders&quot;&gt;
+  &lt;factory
+      class=&quot;org.eclipse.rap.example.theme.SettingStoreThemeIdProvider&quot;
+      id=&quot;settingStore&quot;&gt;
+  &lt;/factory&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+Developers wishing to provide their own theme id provider must implement &lt;code&gt;ThemeIdProvider&lt;/code&gt; and contribute their factory using this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         RAP provides the following default implementations:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;DefaultThemeIdProvider&lt;/code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2008, 2013 EclipseSource and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>

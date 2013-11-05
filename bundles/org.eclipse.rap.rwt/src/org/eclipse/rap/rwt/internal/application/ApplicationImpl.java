@@ -33,6 +33,7 @@ import org.eclipse.rap.rwt.service.ResourceLoader;
 import org.eclipse.rap.rwt.service.ServiceHandler;
 import org.eclipse.rap.rwt.service.ServiceManager;
 import org.eclipse.rap.rwt.service.SettingStoreFactory;
+import org.eclipse.rap.rwt.service.ThemeIdProvider;
 import org.eclipse.swt.widgets.Widget;
 
 
@@ -80,6 +81,12 @@ public class ApplicationImpl implements Application {
     ParamCheck.notNull( exceptionHandler, "exceptionHandler" );
 
     applicationContext.setExceptionHandler( exceptionHandler );
+  }
+  
+  public void setThemeIdProvider( ThemeIdProvider themeIdProvider ) {
+    ParamCheck.notNull( themeIdProvider, "themeIdProvider" );
+    
+    applicationContext.setThemeIdProvider( themeIdProvider );
   }
 
   public void addEntryPoint( String path,
